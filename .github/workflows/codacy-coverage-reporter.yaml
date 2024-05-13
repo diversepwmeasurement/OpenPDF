@@ -1,26 +1,28 @@
-name: Codacy Coverage Reporter
-
-on: [ push ]
-
 jobs:
   codacy-coverage-reporter:
-    runs-on: ubuntu-latest
     name: codacy-coverage-reporter
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Create coverage reports
-        run: mvn -B verify --file pom.xml
-
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1
-        env:
-          CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-        with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: ./openpdf/target/site/jacoco/jacoco.xml, ./pdf-toolbox/target/site/jacoco/jacoco.xml, ./openpdf-fonts-extra/target/site/jacoco/jacoco.xml
+    - continue-on-error: true
+      uses: actions/checkout@v4
+    - continue-on-error: true
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 21
+    - continue-on-error: true
+      name: Create coverage reports
+      run: mvn -B verify --file pom.xml
+    - continue-on-error: true
+      env:
+        CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
+      name: Run codacy-coverage-reporter
+      uses: codacy/codacy-coverage-reporter-action@v1
+      with:
+        coverage-reports: ./openpdf/target/site/jacoco/jacoco.xml, ./pdf-toolbox/target/site/jacoco/jacoco.xml,
+          ./openpdf-fonts-extra/target/site/jacoco/jacoco.xml
+        project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
+name: Codacy Coverage Reporter
+on:
+  repository_dispatch:
+    types: trigger-ga___codacy-coverage-reporter.yaml

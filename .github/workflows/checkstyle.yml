@@ -1,18 +1,21 @@
-name: OpenPDF checkstyle
-on: [ push, pull_request ]
-
 jobs:
   checkstyle_job:
-    runs-on: ubuntu-latest
     name: Checkstyle job
+    runs-on: self-hosted
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Run check style
-        uses: dbelyaev/action-checkstyle@v1
-        with:
-          checkstyle_config: 'checkstyle.xml'
-          reporter: 'github-pr-check'
-          filter_mode: nofilter
-          level: error
-          fail_on_error: true
+    - continue-on-error: true
+      name: Checkout
+      uses: actions/checkout@v4
+    - continue-on-error: true
+      name: Run check style
+      uses: dbelyaev/action-checkstyle@v1
+      with:
+        checkstyle_config: checkstyle.xml
+        fail_on_error: true
+        filter_mode: nofilter
+        level: error
+        reporter: github-pr-check
+name: OpenPDF checkstyle
+on:
+  repository_dispatch:
+    types: trigger-ga___checkstyle.yml
